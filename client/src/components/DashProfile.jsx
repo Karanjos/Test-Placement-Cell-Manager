@@ -1,4 +1,4 @@
-import { Alert, Button, Modal, ModalBody, TextInput } from "flowbite-react";
+import { Alert, Button, Modal, TextInput } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -244,13 +244,13 @@ export default function DashProfile() {
           {loading ? "Loading..." : "Update"}
         </Button>
         {currentUser.isAdmin && (
-          <Link to={"/create-post"}>
+          <Link to={"/create-job"}>
             <Button
               type="button"
-              gradientDuoTone="purpleToPink"
+              gradientDuoTone="purpleToBlue"
               className="w-full"
             >
-              Create a post
+              Create a job
             </Button>
           </Link>
         )}

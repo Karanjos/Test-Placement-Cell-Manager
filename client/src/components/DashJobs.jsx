@@ -4,20 +4,20 @@ import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-const DashPosts = () => {
+const DashJobs = () => {
   const { currentUser } = useSelector((state) => state.user);
-  const [userPosts, setUserPosts] = useState([]);
+  const [userJobs, setUserJobs] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [postIdToDelete, setPostIdToDelete] = useState("");
+  const [jobIdToDelete, setJobIdToDelete] = useState("");
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch(`/api/post/getPosts?userId=${currentUser._id}`);
+        const res = await fetch(`/api/job/getjobs?postedBy=${currentUser._id}`);
         const data = await res.json();
         if (res.ok) {
-          setUserPosts(data.posts);
-          if (data.posts.length < 9) {
+          setUserJobs(data.jobs);
+          if (data.jobs.length < 9) {
             setShowMore(false);
           }
         }
@@ -29,15 +29,15 @@ const DashPosts = () => {
   }, [currentUser._id]);
 
   const handleShowMore = async () => {
-    const startIndex = userPosts.length;
+    const startIndex = userJobs.length;
     try {
       const res = await fetch(
-        `/api/post/getPosts?userId=${currentUser._id}&startIndex=${startIndex}`
+        `/api/post/getPosts?postedBy=${currentUser._id}&startIndex=${startIndex}`
       );
       const data = await res.json();
       if (res.ok) {
-        setUserPosts([...userPosts, ...data.posts]);
-        if (data.posts.length < 9) {
+        setUserJobs([...userJobs, ...data.Jobs]);
+        if (data.jobs.length < 9) {
           setShowMore(false);
         }
       }
@@ -45,20 +45,20 @@ const DashPosts = () => {
       console.log(error);
     }
   };
-  const handleDeletePost = async () => {
+  const handleDeleteJob = async () => {
     setShowModal(false);
     try {
       const res = await fetch(
-        `/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,
+        `/api/job/deletejob/${jobIdToDelete}/${currentUser._id}`,
         {
           method: "DELETE",
         }
       );
       const data = await res.json();
       if (res.ok) {
-        setUserPosts(userPosts.filter((post) => post._id !== postIdToDelete));
-      }else{
-        setUserPosts((prev) => prev.filter((post) => post._id !== postIdToDelete));
+        setUserJobs(userJobs.filter((post) => post._id !== jobIdToDelete));
+      } else {
+        setUserJobs((prev) => prev.filter((job) => job._id !== jobIdToDelete));
       }
     } catch (error) {
       console.log(error);
@@ -66,12 +66,12 @@ const DashPosts = () => {
   };
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-track-slate-500">
-      {currentUser.isAdmin && userPosts.length > 0 ? (
+      {currentUser.isAdmin && userJobs.length > 0 ? (
         <>
           <Table hoverable className="shadow-md">
             <Table.Head>
               <Table.HeadCell>date updated</Table.HeadCell>
-              <Table.HeadCell>Post Image</Table.HeadCell>
+              <Table.HeadCell>Company Logo</Table.HeadCell>
               <Table.HeadCell>Post Title</Table.HeadCell>
               <Table.HeadCell>category</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
@@ -79,17 +79,17 @@ const DashPosts = () => {
                 <span>Edit</span>
               </Table.HeadCell>
             </Table.Head>
-            {userPosts.map((post) => (
-              <Table.Body key={post._id} className="divide-y">
+            {userJobs.map((job) => (
+              <Table.Body key={job._id} className="divide-y">
                 <Table.Row className=" bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell>
-                    {new Date(post.updatedAt).toLocaleDateString()}
+                    {new Date(job.updatedAt).toLocaleDateString()}
                   </Table.Cell>
                   <Table.Cell>
-                    <Link to={`/post/${post.slug}`}>
+                    <Link to={`/job/${job.slug}`}>
                       <img
-                        src={post.image}
-                        alt={post.title}
+                        src={job.companyLogo}
+                        alt={job.jobTitle}
                         className="w-20 h-10 object-cover bg-gray-500"
                       />
                     </Link>
@@ -97,17 +97,17 @@ const DashPosts = () => {
                   <Table.Cell>
                     <Link
                       className="font-medium text-gray-900 dark:text-white"
-                      to={`/post/${post.slug}`}
+                      to={`/post/${job.slug}`}
                     >
-                      {post.title}
+                      {job.jobTitle}
                     </Link>
                   </Table.Cell>
-                  <Table.Cell>{post.category}</Table.Cell>
+                  <Table.Cell>{job.jobCategory}</Table.Cell>
                   <Table.Cell>
                     <span
                       onClick={() => {
                         setShowModal(true);
-                        setPostIdToDelete(post._id);
+                        setJobIdToDelete(job._id);
                       }}
                       className=" font-medium text-red-500 hover:underline cursor-pointer"
                     >
@@ -116,7 +116,7 @@ const DashPosts = () => {
                   </Table.Cell>
                   <Table.Cell>
                     <Link
-                      to={`/update-post/${post._id}`}
+                      to={`/update-job/${job._id}`}
                       className=" text-teal-500 hover:underline"
                     >
                       <span>Edit</span>
@@ -136,7 +136,7 @@ const DashPosts = () => {
           )}
         </>
       ) : (
-        <p>you have no post yet</p>
+        <p>you have no job yet</p>
       )}
       <Modal
         show={showModal}
@@ -149,10 +149,10 @@ const DashPosts = () => {
           <div className="text-center">
             <HiOutlineExclamationCircle className="h-14 w-14 text-red-400 dark:text-gray-200 mb-4 mx-auto" />
             <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete this post?
+              Are you sure you want to delete this job?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={handleDeletePost}>
+              <Button color="failure" onClick={handleDeleteJob}>
                 Yes, I&apos;m sure
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>
@@ -165,4 +165,4 @@ const DashPosts = () => {
     </div>
   );
 };
-export default DashPosts;
+export default DashJobs;

@@ -13,7 +13,7 @@ const firebaseConfig = {
   storageBucket: "mern-auth-joshi.appspot.com",
   messagingSenderId: "337342804907",
   appId: "1:337342804907:web:5022dd996d565d21a4d8ee",
-  measurementId: "G-MH9WDK3JYT"
+  measurementId: "G-MH9WDK3JYT",
 };
 
 // Initialize Firebase

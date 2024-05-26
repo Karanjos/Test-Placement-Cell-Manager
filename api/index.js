@@ -6,7 +6,9 @@ import authRoutes from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
 import postRoutes from "./routes/postRoute.js";
 import commentRoutes from "./routes/commentRoute.js";
-import path from "path";
+import jobRoutes from "./routes/jobRoute.js";
+import applicationRoutes from "./routes/applicationRoute.js";
+// import path from "path";
 
 dotenv.config();
 mongoose
@@ -18,7 +20,7 @@ mongoose
     console.log(err);
   });
 
-const __dirname = path.resolve();
+// const __dirname = path.resolve();
 
 const app = express();
 
@@ -33,12 +35,14 @@ app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
+app.use("/api/job", jobRoutes);
+app.use("/api/application", applicationRoutes);
 
-app.use(express.static(path.join(__dirname, "/client/dist")));
+// app.use(express.static(path.join(__dirname, "/client/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+// });
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

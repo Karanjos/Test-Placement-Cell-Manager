@@ -12,15 +12,23 @@ import AdminRoute from "./components/AdminRoute";
 import CreatePost from "./pages/CreatePost";
 import UpdatePost from "./pages/UpdatePost";
 import PostPage from "./pages/PostPage";
+import CreateJob from "./pages/CreateJob";
 import ScrollTop from "./components/ScrollToTop";
 import Search from "./pages/Search";
+import JobPage from "./pages/JobPage";
+import UpdateJob from "./pages/UpdateJob";
+import ApplyJob from "./pages/ApplyJob";
+import PageNotFound from "./pages/PageNotFound";
+import { useState } from "react";
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <BrowserRouter>
       <ScrollTop />
       {/* Add a navigation bar here */}
-      <Header />
+      <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -29,12 +37,25 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/post/:postSlug" element={<PostPage />} />
+        <Route path="/job/:jobSlug" element={<JobPage />} />
+        <Route path="/apply/:jobId" element={<ApplyJob />} />
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Dashboard
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+              />
+            }
+          />
         </Route>
         <Route element={<AdminRoute />}>
           <Route path="/create-post" element={<CreatePost />} />
+          <Route path="/create-job" element={<CreateJob />} />
           <Route path="/update-post/:postId" element={<UpdatePost />} />
+          <Route path="/update-job/:jobId" element={<UpdateJob />} />
+          <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>
       <Footer />
