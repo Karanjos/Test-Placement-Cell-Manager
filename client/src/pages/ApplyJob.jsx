@@ -11,7 +11,6 @@ import "react-circular-progressbar/dist/styles.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Button, FileInput, TextInput } from "flowbite-react";
 import { useSelector } from "react-redux";
-import { set } from "mongoose";
 
 const ApplyJob = () => {
   const [file, setFile] = useState(null);
@@ -96,7 +95,7 @@ const ApplyJob = () => {
       if (res.ok) {
         setSuccess("Application submitted successfully");
         setTimeout(() => {
-          navigate("/jobs");
+          navigate("/search");
         }, 2000);
       }
     } catch (error) {

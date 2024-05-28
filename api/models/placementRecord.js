@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 const placementRecordSchema = new mongoose.Schema(
   {
     jobId: {
-      type: [String],
+      type: String,
       required: true,
     },
     applicationId: {
-      type: [String],
+      type: String,
       required: true,
     },
     employerId: {
@@ -16,8 +16,7 @@ const placementRecordSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      required: true,
-      enum: ["Pending", "Accepted", "Rejected"],
+      enum: ["pending", "accepted", "rejected"],
     },
   },
   { timestamps: true }

@@ -28,6 +28,20 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isApplicant: {
+      type: Boolean,
+      default: false,
+    },
+    requestedFor: {
+      type: String,
+      enum: ["employer", "applicant"],
+    },
+    placementRecords: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PlacementRecord",
+      },
+    ],
   },
   { timestamps: true }
 );

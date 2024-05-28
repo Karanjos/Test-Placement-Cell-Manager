@@ -93,6 +93,14 @@ const jobSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    acceptedApplicants: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+    },
+    rejectedApplicants: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+    },
   },
   { timestamps: true }
 );

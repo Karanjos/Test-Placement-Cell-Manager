@@ -6,6 +6,8 @@ import DashUsers from "../components/DashUsers";
 import DashComment from "../components/DashComments";
 import DashboardComp from "../components/DashboardComp";
 import DashJobs from "../components/DashJobs";
+import DashApplications from "../components/DashApplications";
+import DashPlacedStudents from "../components/DashPlacedStudents";
 
 const Dashboard = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
@@ -41,9 +43,9 @@ const Dashboard = ({ sidebarOpen, setSidebarOpen }) => {
       {/** Dashboard component */}
       {tab === "dash" && <DashboardComp />}
       {/** Applications */}
-      {tab === "applications" && <h1>Applications</h1>}
+      {tab === "applications" && <DashApplications />}
       {/** Placed Students */}
-      {tab === "placedStudent" && <h1>Placed Students</h1>}
+      {tab === "placedStudent" && <DashPlacedStudents />}
     </div>
   );
 };

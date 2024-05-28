@@ -1,6 +1,7 @@
 import { errorHandler } from "../utils/error.js";
 import Application from "../models/applicationModel.js";
 import Job from "../models/jobModel.js";
+import PlacementRecord from "../models/placementRecord.js";
 
 export const postApplication = async (req, res, next) => {
   const {
@@ -60,6 +61,11 @@ export const getApplications = async (req, res, next) => {
     const applications = await Application.find({
       ...(req.query.applicantId && { applicantId: req.query.applicantId }),
       ...(req.query.jobId && { jobId: req.query.jobId }),
+      ...(req.query.employerId && { employerId: req.query.employerId }),
+      ...(req.query.applicationId && { _id: req.query.applicationId }),
+      ...(req.query.applicationStatus && {
+        applicationStatus: req.query.applicationStatus,
+      }),
     })
       .sort({ createdAt: sortDirection })
       .skip(startIndex)
@@ -75,6 +81,99 @@ export const getApplications = async (req, res, next) => {
       createdAt: { $gte: oneMonthAgo, $lt: now },
     });
     res.json({ applications, totalApplications, lastMonthApplications });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteApplication = async (req, res, next) => {
+  if (
+    !req.user.isAdmin &&
+    req.user.id !== req.params.applicantId &&
+    req.user.id !== req.params.employerId
+  ) {
+    return next(
+      errorHandler(403, "You are not allowed to delete this application")
+    );
+  }
+  try {
+    await Application.findByIdAndDelete(req.params.applicationId);
+    res.status(200).json("Application has been deleted");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateApplication = async (req, res, next) => {
+  if (!req.user.isAdmin && req.user.id !== req.params.applicantId) {
+    return next(
+      errorHandler(403, "You are not allowed to update this application")
+    );
+  }
+  try {
+    const updatedApplication = await Application.findByIdAndUpdate(
+      req.params.applicationId,
+      { $set: req.body },
+      { new: true }
+    );
+    res.status(200).json(updatedApplication);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateApplicationStatus = async (req, res, next) => {
+  console.log("applicationStatus", req.body.applicationStatus);
+
+  if (!req.user.isAdmin && req.user.id !== req.params.employerId) {
+    return next(
+      errorHandler(403, "You are not allowed to update this application")
+    );
+  }
+  try {
+    const updatedApplication = await Application.findByIdAndUpdate(
+      req.params.applicationId,
+      { applicationStatus: req.body.applicationStatus },
+      { new: true }
+    );
+    console.log("updatedApplication", updatedApplication);
+    if (req.body.applicationStatus === "Accepted") {
+      console.log("yaha aa gya hu m accepted m");
+      await Job.findByIdAndUpdate(req.body.jobId, {
+        $push: { acceptedApplicants: req.params.applicationId },
+      });
+      const newPlacementRecord = new PlacementRecord({
+        jobId: req.params.jobId,
+        applicationId: req.params.applicationId,
+        employerId: req.params.employerId,
+        status: "pending",
+      });
+      await newPlacementRecord.save();
+      console.log("newPlacementRecord", newPlacementRecord);
+      // add this placement record to the user's schema
+      await User.findByIdAndUpdate(req.params.applicantId, {
+        $push: { placementRecords: newPlacementRecord._id },
+      });
+    } else if (req.body.applicationStatus === "rejected") {
+      console.log("yaha aa gya hu m rejected m");
+      await Job.findByIdAndUpdate(req.body.jobId, {
+        $push: { rejectedApplicants: req.params.applicationId },
+      });
+    }
+
+    res.status(200).json(updatedApplication);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getApplication = async (req, res, next) => {
+  try {
+    const application = await Application.findById(req.params.applicationId);
+    if (!application) {
+      return next(errorHandler(404, "Application not found"));
+    }
+    res.status(200).json(application);
   } catch (error) {
     next(error);
   }
