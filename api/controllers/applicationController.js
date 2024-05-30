@@ -1,7 +1,8 @@
 import { errorHandler } from "../utils/error.js";
 import Application from "../models/applicationModel.js";
 import Job from "../models/jobModel.js";
-import PlacementRecord from "../models/placementRecord.js";
+import PlacementRecord from "../models/placementRecordModel.js";
+import User from "../models/userModel.js";
 
 export const postApplication = async (req, res, next) => {
   const {
@@ -123,41 +124,89 @@ export const updateApplication = async (req, res, next) => {
 };
 
 export const updateApplicationStatus = async (req, res, next) => {
-  console.log("applicationStatus", req.body.applicationStatus);
-
   if (!req.user.isAdmin && req.user.id !== req.params.employerId) {
     return next(
       errorHandler(403, "You are not allowed to update this application")
     );
   }
   try {
+    const application = await Application.findById(req.params.applicationId);
+    if (!application) {
+      return next(errorHandler(404, "Application not found"));
+    }
+    const job = await Job.findById(req.params.jobId);
+    if (!job) {
+      return next(errorHandler(404, "Job not found"));
+    }
+    if (job.postedBy.toString() !== req.params.employerId) {
+      return next(
+        errorHandler(403, "You are not allowed to update this application")
+      );
+    }
+    const applicant = await User.findById(req.params.applicantId);
+    if (!applicant) {
+      return next(errorHandler(404, "Applicant not found"));
+    }
+    const employer = await User.findById(req.params.employerId);
+    if (!employer) {
+      return next(errorHandler(404, "Employer not found"));
+    }
     const updatedApplication = await Application.findByIdAndUpdate(
       req.params.applicationId,
       { applicationStatus: req.body.applicationStatus },
       { new: true }
     );
-    console.log("updatedApplication", updatedApplication);
     if (req.body.applicationStatus === "Accepted") {
-      console.log("yaha aa gya hu m accepted m");
       await Job.findByIdAndUpdate(req.body.jobId, {
         $push: { acceptedApplicants: req.params.applicationId },
       });
-      const newPlacementRecord = new PlacementRecord({
-        jobId: req.params.jobId,
+      const existingRecord = await PlacementRecord.findOne({
         applicationId: req.params.applicationId,
-        employerId: req.params.employerId,
-        status: "pending",
       });
-      await newPlacementRecord.save();
-      console.log("newPlacementRecord", newPlacementRecord);
-      // add this placement record to the user's schema
-      await User.findByIdAndUpdate(req.params.applicantId, {
-        $push: { placementRecords: newPlacementRecord._id },
-      });
-    } else if (req.body.applicationStatus === "rejected") {
-      console.log("yaha aa gya hu m rejected m");
+      if (existingRecord) {
+        // Handle the case where a PlacementRecord with the given applicationId already exists
+        // For example, you can return an error
+        return res.status(400).json({
+          error: "A PlacementRecord with this applicationId already exists",
+        });
+      } else {
+        const newPlacementRecord = new PlacementRecord({
+          jobId: req.params.jobId,
+          applicationId: req.params.applicationId,
+          employerId: req.params.employerId,
+          status: "pending",
+          applicantId: req.params.applicantId,
+          applicantName: applicant.username,
+          applicantEmail: applicant.email,
+          jobTitle: job.jobTitle,
+          companyName: job.companyName,
+          employerName: employer.username,
+          jobCategory: job.jobCategory,
+        });
+        await newPlacementRecord.save();
+        // add this placement record to the user's schema
+        await User.findOneAndUpdate(
+          { _id: req.params.applicantId },
+          { $push: { placementRecords: newPlacementRecord._id } },
+          { new: true, useFindAndModify: false }
+        );
+      }
+    } else if (req.body.applicationStatus === "Rejected") {
       await Job.findByIdAndUpdate(req.body.jobId, {
         $push: { rejectedApplicants: req.params.applicationId },
+      });
+
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: req.params.applicantId },
+        { $pull: { placementRecords: req.params.applicationId } },
+        { new: true, useFindAndModify: false }
+      );
+      if (!updatedUser) {
+        return next(errorHandler(404, "User not found"));
+      }
+      // delete the record from placement record
+      await PlacementRecord.findOneAndDelete({
+        applicationId: req.params.applicationId,
       });
     }
 
@@ -174,6 +223,23 @@ export const getApplication = async (req, res, next) => {
       return next(errorHandler(404, "Application not found"));
     }
     res.status(200).json(application);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPlacedStudents = async (req, res, next) => {
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.sort == "asc" ? 1 : -1;
+    const placementRecords = await PlacementRecord.find()
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+    const totalPlacedStudents = await PlacementRecord.countDocuments({});
+
+    res.json({ placementRecords, totalPlacedStudents });
   } catch (error) {
     next(error);
   }

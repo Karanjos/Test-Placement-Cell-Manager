@@ -6,6 +6,7 @@ import {
   getApplication,
   updateApplication,
   updateApplicationStatus,
+  getPlacedStudents,
 } from "../controllers/applicationController.js";
 
 const router = express.Router();
@@ -19,9 +20,10 @@ router.delete(
 );
 router.put("/update/:applicationId", verifyToken, updateApplication);
 router.put(
-  "/updatestatus/:applicationId/:jobId/:applicantId/:employerId",
+  "/updatestatus/:applicantId/:applicationId/:jobId/:employerId",
   verifyToken,
   updateApplicationStatus
 );
+router.get("/placedstudents", verifyToken, getPlacedStudents);
 
 export default router;

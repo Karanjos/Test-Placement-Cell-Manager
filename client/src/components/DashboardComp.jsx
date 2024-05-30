@@ -96,7 +96,7 @@ const DashboardComp = () => {
         if (res.ok) {
           const data = await res.json();
           const placedStudent = data.applications.filter(
-            (application) => application.applicationStatus === "hired"
+            (application) => application.applicationStatus === "Accepted"
           );
           setPlacedStudents(placedStudent);
           setTotalPlacedStudents(placedStudent.length);

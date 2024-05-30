@@ -181,7 +181,7 @@ const DashApplications = () => {
   ) => {
     try {
       const res = await fetch(
-        `/api/application/updatestatus/${applicationId}/${jobId}/${applicantId}/${employerId}`,
+        `/api/application/updatestatus/${applicantId}/${applicationId}/${jobId}/${employerId}`,
         {
           method: "PUT",
           headers: {
