@@ -1,26 +1,18 @@
 import { Button, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { FaBriefcase, FaRegComments, FaUserCheck } from "react-icons/fa";
+import { FaBriefcase, FaUserCheck } from "react-icons/fa";
 import {
-  HiAnnotation,
   HiArrowNarrowUp,
   HiDocumentText,
   HiOutlineUserGroup,
 } from "react-icons/hi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { app } from "../firebase";
 
 const DashboardComp = () => {
   const [users, setUsers] = useState([]);
-  const [posts, setPosts] = useState([]);
-  const [comments, setComments] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [totalPosts, setTotalPosts] = useState(0);
-  const [totalComments, setTotalComments] = useState(0);
   const [lastMonthUsers, setLastMonthUsers] = useState(0);
-  const [lastMonthPosts, setLastMonthPosts] = useState(0);
-  const [lastMonthComments, setLastMonthComments] = useState(0);
   const [jobs, setJobs] = useState([]);
   const [totalJobs, setTotalJobs] = useState(0);
   const [lastMonthJobs, setLastMonthJobs] = useState(0);
@@ -91,17 +83,15 @@ const DashboardComp = () => {
 
     const fetchPlacedStudents = async () => {
       try {
-        const res = await fetch("/api/application/getapplications?limit=5");
+        const res = await fetch("/api/application/placedstudents?limit=5");
 
         if (res.ok) {
           const data = await res.json();
-          const placedStudent = data.applications.filter(
-            (application) => application.applicationStatus === "Accepted"
-          );
-          setPlacedStudents(placedStudent);
-          setTotalPlacedStudents(placedStudent.length);
 
-          setLastMonthPlacedStudents(placedStudent.length);
+          setPlacedStudents(data.placementRecords);
+          setTotalPlacedStudents(data.totalPlacedStudents);
+
+          setLastMonthPlacedStudents(data.lastMonthPlacements);
         }
       } catch (error) {
         console.log(error.message);
@@ -207,9 +197,11 @@ const DashboardComp = () => {
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
           <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className=" text-center p-2">Recent Users</h1>
-            <Button type="button" gradientDuoTone="purpleToBlue" outline>
-              <Link to="/dashboard?tab=users">View All</Link>
-            </Button>
+            <Link to="/dashboard?tab=users">
+              <Button type="button" gradientDuoTone="purpleToBlue" outline>
+                View All
+              </Button>
+            </Link>
           </div>
           <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
             <Table hoverable>
@@ -243,9 +235,11 @@ const DashboardComp = () => {
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
           <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className=" text-center p-2">Recent Jobs</h1>
-            <Button type="button" gradientDuoTone="purpleToBlue" outline>
-              <Link to="/dashboard?tab=jobs">View All</Link>
-            </Button>
+            <Link to="/dashboard?tab=jobs">
+              <Button type="button" gradientDuoTone="purpleToBlue" outline>
+                View All
+              </Button>
+            </Link>
           </div>
           <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
             <Table hoverable>
@@ -273,20 +267,19 @@ const DashboardComp = () => {
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
           <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className=" text-center p-2">Recent Placed Students</h1>
-            <Button type="button" gradientDuoTone="purpleToBlue" outline>
-              <Link to="/dashboard?tab=placedStudent">View All</Link>
-            </Button>
+            <Link to="/dashboard?tab=placedStudent">
+              <Button type="button" gradientDuoTone="purpleToBlue" outline>
+                View All
+              </Button>
+            </Link>
           </div>
           <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
             <Table hoverable>
               <Table.Head>
                 <Table.HeadCell>Student Name</Table.HeadCell>
                 <Table.HeadCell>Student Email</Table.HeadCell>
-                {/* <Table.HeadCell>Student Course</Table.HeadCell>
-                <Table.HeadCell>Student Branch</Table.HeadCell>
-                <Table.HeadCell>PassOut Year</Table.HeadCell>
-                <Table.HeadCell>Comapny Name</Table.HeadCell>
-                <Table.HeadCell>Student Package</Table.HeadCell> */}
+                <Table.HeadCell>Company Name</Table.HeadCell>
+                <Table.HeadCell>Job Title</Table.HeadCell>
               </Table.Head>
               <Table.Body className=" divide-y">
                 {placedStudents &&
@@ -297,6 +290,8 @@ const DashboardComp = () => {
                     >
                       <Table.Cell>{placedStudent.applicantName}</Table.Cell>
                       <Table.Cell>{placedStudent.applicantEmail}</Table.Cell>
+                      <Table.Cell>{placedStudent.companyName}</Table.Cell>
+                      <Table.Cell>{placedStudent.jobTitle}</Table.Cell>
                     </Table.Row>
                   ))}
               </Table.Body>
@@ -306,9 +301,11 @@ const DashboardComp = () => {
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
           <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className=" text-center p-2">Recent Applications</h1>
-            <Button type="button" gradientDuoTone="purpleToBlue" outline>
-              <Link to="/dashboard?tab=applications">View All</Link>
-            </Button>
+            <Link to="/dashboard?tab=applications">
+              <Button type="button" gradientDuoTone="purpleToBlue" outline>
+                View All
+              </Button>
+            </Link>
           </div>
           <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
             <Table hoverable>

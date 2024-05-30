@@ -238,8 +238,16 @@ export const getPlacedStudents = async (req, res, next) => {
       .skip(startIndex)
       .limit(limit);
     const totalPlacedStudents = await PlacementRecord.countDocuments({});
-
-    res.json({ placementRecords, totalPlacedStudents });
+    const now = new Date();
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+    const lastMonthPlacements = await PlacementRecord.countDocuments({
+      createdAt: { $gte: oneMonthAgo, $lt: now },
+    });
+    res.json({ placementRecords, totalPlacedStudents, lastMonthPlacements });
   } catch (error) {
     next(error);
   }
