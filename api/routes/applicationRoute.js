@@ -7,6 +7,7 @@ import {
   updateApplication,
   updateApplicationStatus,
   getPlacedStudents,
+  getAppliedJobs,
 } from "../controllers/applicationController.js";
 
 const router = express.Router();

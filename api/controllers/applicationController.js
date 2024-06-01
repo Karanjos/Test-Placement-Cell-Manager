@@ -81,7 +81,19 @@ export const getApplications = async (req, res, next) => {
     const lastMonthApplications = await Application.countDocuments({
       createdAt: { $gte: oneMonthAgo, $lt: now },
     });
-    res.json({ applications, totalApplications, lastMonthApplications });
+
+    const applicationsWithDetails = await Promise.all(
+      applications.map(async (application) => {
+        const employer = await User.findById(application.employerId);
+        const job = await Job.findById(application.jobId);
+        return { application, employer, job };
+      })
+    );
+    res.status(200).json({
+      applications: applicationsWithDetails,
+      totalApplications,
+      lastMonthApplications,
+    });
   } catch (error) {
     next(error);
   }
@@ -248,6 +260,25 @@ export const getPlacedStudents = async (req, res, next) => {
       createdAt: { $gte: oneMonthAgo, $lt: now },
     });
     res.json({ placementRecords, totalPlacedStudents, lastMonthPlacements });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAppliedJobs = async (req, res, next) => {
+  try {
+    //we want to fetch applications then get the job associated with each application
+    const applications = await Application.find({
+      applicantId: req.params.applicantId,
+    });
+
+    const jobs = await Promise.all(
+      applications.map(async (application) => {
+        const job = await Job.findById(application.jobId);
+        return job;
+      })
+    );
+    res.status(200).json(jobs);
   } catch (error) {
     next(error);
   }

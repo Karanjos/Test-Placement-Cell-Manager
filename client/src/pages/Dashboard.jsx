@@ -38,8 +38,6 @@ const Dashboard = ({ sidebarOpen, setSidebarOpen }) => {
       {tab === "jobs" && <DashJobs />}
       {/** Users */}
       {tab === "users" && <DashUsers />}
-      {/** Comment */}
-      {tab === "comments" && <DashComment />}
       {/** Dashboard component */}
       {tab === "dash" && <DashboardComp />}
       {/** Applications */}

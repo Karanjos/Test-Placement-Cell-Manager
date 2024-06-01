@@ -4,7 +4,6 @@ import About from "./pages/About";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
-import Projects from "./pages/Projects";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Footer from "./components/Footer";
@@ -20,6 +19,8 @@ import UpdateJob from "./pages/UpdateJob";
 import ApplyJob from "./pages/ApplyJob";
 import PageNotFound from "./pages/PageNotFound";
 import { useState } from "react";
+import AppliedJobs from "./pages/AppliedJobs";
+import Help from "./pages/Help";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,10 +36,12 @@ function App() {
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/search" element={<Search />} />
-        <Route path="/projects" element={<Projects />} />
+        <Route path="/help" element={<Help />} />
         <Route path="/post/:postSlug" element={<PostPage />} />
         <Route path="/job/:jobSlug" element={<JobPage />} />
         <Route path="/apply/:jobId" element={<ApplyJob />} />
+        <Route path="/applied-jobs" element={<AppliedJobs />} />
+        <Route path="*" element={<PageNotFound />} />
         <Route element={<PrivateRoute />}>
           <Route
             path="/dashboard"
@@ -55,7 +58,6 @@ function App() {
           <Route path="/create-job" element={<CreateJob />} />
           <Route path="/update-post/:postId" element={<UpdatePost />} />
           <Route path="/update-job/:jobId" element={<UpdateJob />} />
-          <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>
       <Footer />

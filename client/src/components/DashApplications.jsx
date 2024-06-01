@@ -7,6 +7,7 @@ import {
   FileInput,
   Modal,
   Select,
+  Spinner,
   Table,
   TextInput,
 } from "flowbite-react";
@@ -37,9 +38,11 @@ const DashApplications = () => {
   const [fileUploadError, setFileUploadError] = useState(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchApplications = async () => {
+      setLoading(true);
       try {
         const res = await fetch(
           `/api/application/getapplications?postedBy=${currentUser._id}`
@@ -47,12 +50,16 @@ const DashApplications = () => {
         const data = await res.json();
         if (res.ok) {
           setApplications(data.applications);
+          console.log(data.applications);
+          console.log(applications);
           if (data.applications.length < 9) {
             setShowMore(false);
           }
+          setLoading(false);
         }
       } catch (error) {
         console.log(error);
+        setLoading(false);
       }
     };
     if (currentUser.isAdmin) fetchApplications();
@@ -99,7 +106,8 @@ const DashApplications = () => {
       if (res.ok) {
         setApplications((prev) =>
           prev.filter(
-            (application) => application._id !== applicationIdToDelete
+            (application) =>
+              application.application._id !== applicationIdToDelete
           )
         );
         setShowDeleteModal(false);
@@ -231,16 +239,24 @@ const DashApplications = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner size="xl" />
+      </div>
+    );
+  }
+
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500 mt-5">
       {currentUser.isAdmin && applications.length > 0 ? (
         <>
           <div className="">
-            <div className="flex justify-end gap-5 m-2">
+            {/* <div className="flex justify-end gap-5 m-2">
               <form>
                 <TextInput placeholder="Search" />
               </form>
-            </div>
+            </div> */}
           </div>
           <Table hoverable className="shadow-md w-full">
             <Table.Head>
@@ -250,7 +266,7 @@ const DashApplications = () => {
               <Table.HeadCell>Student Name</Table.HeadCell>
               <Table.HeadCell>Student Email</Table.HeadCell>
               <Table.HeadCell>Job Title</Table.HeadCell>
-              <Table.HeadCell>Application Id</Table.HeadCell>
+              <Table.HeadCell>Company Name</Table.HeadCell>
               <Table.HeadCell>Application Status</Table.HeadCell>
               <Table.HeadCell>Actions</Table.HeadCell>
             </Table.Head>
@@ -260,23 +276,28 @@ const DashApplications = () => {
                   <Table.Cell className="p-4">
                     <Checkbox />
                   </Table.Cell>
-                  <Table.Cell>{application.applicantName}</Table.Cell>
-                  <Table.Cell>{application.applicantEmail}</Table.Cell>
-                  <Table.Cell>{application.jobId}</Table.Cell>
-                  <Table.Cell>{application._id}</Table.Cell>
+                  <Table.Cell>
+                    {application.application.applicantName}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {application.application.applicantEmail}
+                  </Table.Cell>
+                  <Table.Cell>{application.job.jobTitle}</Table.Cell>
+                  <Table.Cell>{application.job.companyName}</Table.Cell>
+
                   <Table.Cell>
                     <Select
                       className="w-full"
                       onChange={(e) =>
                         handleChangeStatus(
                           e.target.value,
-                          application._id,
-                          application.jobId,
-                          application.applicantId,
-                          application.employerId
+                          application.application._id,
+                          application.application.jobId,
+                          application.application.applicantId,
+                          application.application.employerId
                         )
                       }
-                      value={application.applicationStatus}
+                      value={application.application.applicationStatus}
                     >
                       <option value="Pending">Pending</option>
                       <option value="Accepted">Accepted</option>
@@ -290,7 +311,9 @@ const DashApplications = () => {
                         size="xs"
                         pill
                         color="blue"
-                        onClick={() => handleShowApplication(application._id)}
+                        onClick={() =>
+                          handleShowApplication(application.application._id)
+                        }
                       >
                         <FaEye />
                       </Button>
@@ -298,7 +321,9 @@ const DashApplications = () => {
                         size="xs"
                         pill
                         color="green"
-                        onClick={() => handleEditApplication(application._id)}
+                        onClick={() =>
+                          handleEditApplication(application.application._id)
+                        }
                       >
                         <FaEdit />
                       </Button>
@@ -308,9 +333,9 @@ const DashApplications = () => {
                         color="red"
                         onClick={() => {
                           setShowDeleteModal(true);
-                          setApplicantId(application.applicantId);
-                          setEmployerId(application.employerId);
-                          setApplicationIdToDelete(application._id);
+                          setApplicantId(application.application.applicantId);
+                          setEmployerId(application.application.employerId);
+                          setApplicationIdToDelete(application.application._id);
                         }}
                       >
                         <FaTrash />

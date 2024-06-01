@@ -4,16 +4,16 @@ import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-const DashJobs = () => {
+const DashJobs = ({ jobId }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [userJobs, setUserJobs] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [jobIdToDelete, setJobIdToDelete] = useState("");
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchJobs = async () => {
       try {
-        const res = await fetch(`/api/job/getjobs?postedBy=${currentUser._id}`);
+        const res = await fetch(`/api/job/getjobs`);
         const data = await res.json();
         if (res.ok) {
           setUserJobs(data.jobs);
@@ -25,15 +25,13 @@ const DashJobs = () => {
         console.log(error);
       }
     };
-    if (currentUser.isAdmin) fetchPosts();
+    fetchJobs();
   }, [currentUser._id]);
 
   const handleShowMore = async () => {
     const startIndex = userJobs.length;
     try {
-      const res = await fetch(
-        `/api/post/getPosts?postedBy=${currentUser._id}&startIndex=${startIndex}`
-      );
+      const res = await fetch(`/api/job/getjobs?startIndex=${startIndex}`);
       const data = await res.json();
       if (res.ok) {
         setUserJobs([...userJobs, ...data.Jobs]);

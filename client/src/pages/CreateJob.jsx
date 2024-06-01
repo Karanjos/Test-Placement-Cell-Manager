@@ -301,7 +301,7 @@ const CreateJob = () => {
         </div>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <Select
-            className="felx-1"
+            className="flex-1"
             onChange={(e) => setSalaryType(e.target.value)}
           >
             <option value="fixed">Fixed Salary</option>
@@ -423,7 +423,7 @@ const CreateJob = () => {
         <div className="divider font-bold text-slate-600 divider-neutral dark:divider-default ">
           OTHER DETAILS
         </div>
-        <div className="flex flex-col gap-4 sm:flex-row justify-between items-end">
+        <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <Select
             onChange={(e) =>
               setFormData({ ...formData, jobLocation: e.target.value })

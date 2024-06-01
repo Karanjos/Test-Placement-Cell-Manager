@@ -6,7 +6,10 @@ import {
   getjobs,
   updateJob,
 } from "../controllers/jobController.js";
-import { postApplication } from "../controllers/applicationController.js";
+import {
+  getAppliedJobs,
+  postApplication,
+} from "../controllers/applicationController.js";
 
 const router = express.Router();
 
@@ -15,5 +18,6 @@ router.get("/getjobs", getjobs);
 router.delete("/deletejob/:jobId/:postedBy", verifyToken, deleteJob);
 router.put("/updatejob/:jobId/:postedBy", verifyToken, updateJob);
 router.post("/apply/:jobId", verifyToken, postApplication);
+router.get("/appliedjobs/:applicantId", verifyToken, getAppliedJobs);
 
 export default router;

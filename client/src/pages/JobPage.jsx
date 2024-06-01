@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { MdLocationOn } from "react-icons/md";
 import JobCard from "../components/JobCard";
+import { useSelector } from "react-redux";
 
 const JobPage = () => {
   const { jobSlug } = useParams();
@@ -20,6 +21,7 @@ const JobPage = () => {
   const [error, setError] = useState(false);
   const [recentJobs, setRecentJobs] = useState([]);
   const [currentJobId, setCurrentJobId] = useState("");
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -90,9 +92,8 @@ const JobPage = () => {
             <div className="flex flex-col md:flex-row gap-2">
               <h1>{currentJob.companyName}</h1>
               <Link
-                to={`/search?jobCategory=${
-                  currentJob && currentJob.jobCategory
-                }`}
+                to={`/search?jobCategory=${currentJob &&
+                  currentJob.jobCategory}`}
                 className="self-center"
               >
                 <Button color="gray" pill size="xs" className="px-3">
@@ -110,11 +111,20 @@ const JobPage = () => {
           </div>
         </div>
         {/**link to apply for job  */}
-        <Link to={`/apply/${currentJob._id}`}>
-          <Button gradientDuoTone="purpleToBlue" outline>
-            Apply for job
-          </Button>
-        </Link>
+
+        {currentUser.isAdmin || currentUser.isEmployer ? (
+          <Link to={`/update-job/${currentJob._id}`}>
+            <Button color="gray" pill>
+              Edit Job
+            </Button>
+          </Link>
+        ) : (
+          <Link to={`/apply/${currentJob._id}`}>
+            <Button color="gray" pill>
+              Apply Now
+            </Button>
+          </Link>
+        )}
       </div>
       <div className="divider"></div>
       {/**job details */}

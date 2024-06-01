@@ -1,127 +1,78 @@
-import { useState, useRef, useEffect } from "react";
-import ChatBot from "react-simple-chatbot"; //npm install react-simple-chatbot --save
-
-const About = () => {
-  const [showChatbot, setShowChatbot] = useState(false);
-  const [chatVisible, setChatVisible] = useState(false);
-  const chatbotRef = useRef(null);
-  const steps = [
-    {
-      id: "1",
-      message: "hello, What is your name?",
-      trigger: "2",
-    },
-    {
-      id: "2",
-      user: true,
-      trigger: "3",
-    },
-    {
-      id: "3",
-      message: `Hi {previousValue} , nice to meet you!`,
-      trigger: "4",
-    },
-    {
-      id: "4",
-      message: `what are ur queries !`,
-      trigger: "5",
-    },
-    {
-      id: "5",
-      options: [
-        {
-          value: 1,
-          label: "How can I contact the placement cell?",
-          trigger: "6",
-        },
-        { value: 2, label: "Eligibility criteria", trigger: "7" },
-        { value: 3, label: "Job opportunities", trigger: "8" },
-        { value: 4, label: "problem regarding registration", trigger: "ab" },
-      ],
-    },
-    {
-      id: "ab",
-      message: `You can contact Karan Joshi
-      Email:karanjoshi@gmail.com`,
-      trigger: "9",
-    },
-
-    {
-      id: "6",
-      message: `you can contact to your placement head akhilpatwal4
-      @gmail.com`,
-      trigger: "9",
-    },
-    {
-      id: "7",
-      message: `At least 60% in the 10th and 12th grades And CGPA more than 6 in the college`,
-      trigger: "9",
-    },
-    {
-      id: "8",
-      message: ` check out the job section for better results`,
-      trigger: "9",
-    },
-    {
-      id: "9",
-      message: `any further queries?`,
-      trigger: "10",
-    },
-    {
-      id: "10",
-      user: true,
-      validator: (value) => {
-        if (value === "yes") {
-          return true;
-        }
-        return "thank you for visiting!";
-      },
-
-      trigger: "5",
-    },
-  ];
-
-  const toggleChatbot = () => {
-    setShowChatbot(!showChatbot);
-    setChatVisible(!showChatbot);
-  };
-
-  const handleEndChat = () => {
-    setChatVisible(false);
-  };
-  const handleOutsideClick = (e) => {
-    if (chatbotRef.current && !chatbotRef.current.contains(e.target)) {
-      setChatVisible(false);
-    }
-  };
-  useEffect(() => {
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
-
+export default function About() {
   return (
-    <div className=" min-h-screen relative">
-      <div className="absolute bottom-5 right-5 z-50">
-        {chatVisible && (
-          <div ref={chatbotRef}>
-            <ChatBot
-              className="mb-8"
-              steps={steps}
-              handleEndChat={handleEndChat}
-            />
+    <div className="min-h-screen dark:bg-slate-900">
+      <div className="animate-gradient-x">
+        <div className="flex flex-col items-center justify-center px-6 mx-auto my-5 md:my-20">
+          <div className="w-full max-w-3xl mx-auto text-center">
+            <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight hover:scale-105 transition-all duration-300 dark:text-slate-400">
+              Welcome to Placement Portal
+            </h1>
+            <p className="mb-6 text-sm font-normal hover:scale-105 transition-all duration-300">
+              At <b>Placement Portal</b>, we understand the significance of
+              bridging the gap between talented individuals and rewarding career
+              opportunities. Our platform is designed with a vision to empower
+              both job seekers and employers by providing a seamless, efficient,
+              and transparent recruitment process.
+            </p>
+            <h2 className="mb-4 text-2xl font-bold hover:scale-105 transition-all duration-300 dark:text-slate-400">
+              Our Mission
+            </h2>
+            <p className="mb-6 text-sm font-normal hover:scale-105 transition-all duration-300">
+              Our mission is to revolutionize the way people find jobs and
+              companies discover talent. We strive to create a dynamic ecosystem
+              where every individual has access to opportunities that align with
+              their skills, aspirations, and values. Through innovation and
+              dedication, we aim to make the recruitment journey more
+              personalized, insightful, and impactful.
+            </p>
+            <h2 className="mb-6 text-2xl font-bold leading-tight tracking-tight hover:scale-105 transition-all duration-300 dark:text-slate-400">
+              What Sets Us Apart
+            </h2>
+            <div>
+              <p className="mb-6 text-sm font-normal hover:scale-105 transition-all duration-300">
+                <b>User-Centric Approach</b>: We prioritize user experience and
+                satisfaction above all else. Our platform is built with
+                intuitive features and advanced algorithms to ensure a smooth
+                and enjoyable experience for both candidates and recruiters.
+              </p>
+              <p className="mb-6 text-sm font-normal hover:scale-105 transition-all duration-300">
+                <b>Comprehensive Solutions</b>: Whether you&apos;re a recent
+                graduate exploring career options or a seasoned professional
+                seeking new challenges, we offer a wide range of resources and
+                tools to support your journey. From job listings and resume
+                building to interview preparation and career guidance,
+                we&apos;ve got you covered.
+              </p>
+              <p className="mb-6 text-sm font-normal hover:scale-105 transition-all duration-300">
+                <b>Data-Driven Insights</b>: We leverage the power of data
+                analytics to deliver valuable insights to our users. By
+                analyzing trends, preferences, and market dynamics, we help
+                candidates make informed decisions and assist employers in
+                identifying top talent more efficiently.
+              </p>
+            </div>
+            <h2 className="mb-4 text-2xl font-bold hover:scale-105 transition-all duration-300 dark:text-slate-400">
+              Our Commitment to Excellence
+            </h2>
+            <p className="mb-6 text-sm font-normal hover:scale-105 transition-all duration-300">
+              At Placement Portal, excellence is not just a goal; it&apos;s a
+              standard we uphold in everything we do. We are committed to
+              maintaining the highest level of integrity, professionalism, and
+              quality in our interactions with users and partners. Our dedicated
+              team works tirelessly to continuously improve our platform.
+            </p>
+            <h2 className="mb-4 text-2xl font-bold hover:scale-105 transition-all duration-300 dark:text-slate-400">
+              Join Us on the Journey
+            </h2>
+            <p className="mb-6 text-sm font-normal hover:scale-105 transition-all duration-300">
+              Whether you&apos;re a job seeker looking for your dream role or an
+              employer seeking top talent, we invite you to join us on this
+              exciting journey. Together, we can create a brighter future for
+              individuals and organizations alike.
+            </p>
           </div>
-        )}
-      </div>
-      <div
-        className="fixed bottom-5 right-5  w-16 h-16 bg-cyan-500 rounded-full flex items-center justify-center cursor-pointer"
-        onClick={toggleChatbot}
-      >
-        <span className="text-2xl font-bold">🤖</span>
+        </div>
       </div>
     </div>
   );
-};
-
-export default About;
+}

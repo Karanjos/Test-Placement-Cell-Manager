@@ -5,7 +5,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSearch, FaSun, FaUser } from "react-icons/fa";
 import { toggleTheme } from "../redux/theme/themeSlice";
 import { signoutSuccess } from "../redux/user/userSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HiLogout, HiViewGrid } from "react-icons/hi";
 import { RiMenu3Fill } from "react-icons/ri";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
@@ -20,6 +20,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showSearchbar, setShowSearchbar] = useState(false);
   const navigate = useNavigate();
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -65,6 +66,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   const toggleSearchbar = () => {
+    searchInputRef.current && searchInputRef.current.focus();
     setShowSearchbar(!showSearchbar);
   };
 
@@ -86,6 +88,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
               value={searchTerm}
               rightIcon={AiOutlineSearch}
               onChange={(e) => setSearchTerm(e.target.value)}
+              ref={searchInputRef}
             />
           </form>
         </div>
@@ -95,7 +98,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
           <HiOutlineAdjustmentsHorizontal
             size={25}
             style={{ fontWeight: "bold" }}
-            className="text-teal-700 cursor-pointer"
+            className="text-teal-700 cursor-pointer md:hidden"
             onClick={toggleSidebar}
             title="Toggle Sidebar"
           />
@@ -159,9 +162,11 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
             <Link to="dashboard?tab=profile">
               <Dropdown.Item icon={FaUser}>Profile</Dropdown.Item>
             </Link>
-            <Link to="dashboard?tab=dash">
-              <Dropdown.Item icon={HiViewGrid}>Dashboard</Dropdown.Item>
-            </Link>
+            {currentUser && currentUser.isAdmin && (
+              <Link to="dashboard?tab=dash">
+                <Dropdown.Item icon={HiViewGrid}>Dashboard</Dropdown.Item>
+              </Link>
+            )}
             <Dropdown.Item
               className="lg:hidden"
               onClick={() => dispatch(toggleTheme())}
@@ -196,26 +201,32 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
             Home
           </Navbar.Link>
         </Link>
+        {currentUser && currentUser.isAdmin ? (
+          <Link to="/search">
+            <Navbar.Link active={path === "/search"} as={"div"}>
+              All Jobs
+            </Navbar.Link>
+          </Link>
+        ) : (
+          currentUser &&
+          currentUser.isApplicant && (
+            <Link to="/applied-jobs">
+              <Navbar.Link active={path === "/applied-jobs"} as={"div"}>
+                Applied Jobs
+              </Navbar.Link>
+            </Link>
+          )
+        )}
         <Link to="/about">
           <Navbar.Link active={path === "/about"} as={"div"}>
-            About
+            About Us
           </Navbar.Link>
         </Link>
-        <Link to="/projects">
-          <Navbar.Link active={path === "/projects"} as={"div"}>
-            Projects
+        <Link to="/help">
+          <Navbar.Link active={path === "/help"} as={"div"}>
+            Help & Support
           </Navbar.Link>
         </Link>
-        <form onSubmit={handleSubmit} className="mt-4">
-          <TextInput
-            type="text"
-            placeholder="Search..."
-            rightIcon={AiOutlineSearch}
-            className="md:hidden"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </form>
       </Navbar.Collapse>
     </Navbar>
   );

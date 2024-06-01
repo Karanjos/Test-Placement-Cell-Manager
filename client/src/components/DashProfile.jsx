@@ -195,9 +195,8 @@ export default function DashProfile() {
                 path: {
                   // suggest some different colors by changing stroke
 
-                  stroke: `rgba(62, 152, 199, ${
-                    imageFileUploadProgress / 100
-                  })`,
+                  stroke: `rgba(62, 152, 199, ${imageFileUploadProgress /
+                    100})`,
                 },
               }}
             />
@@ -205,11 +204,9 @@ export default function DashProfile() {
           <img
             src={imageFileUrl || currentUser.profilePicture}
             alt="user"
-            className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
-              imageFileUploadProgress &&
+            className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress &&
               imageFileUploadProgress < 100 &&
-              "opacity-50"
-            }`}
+              "opacity-50"}`}
           />
         </div>
         {imageFileUploadError && (
@@ -243,7 +240,7 @@ export default function DashProfile() {
         >
           {loading ? "Loading..." : "Update"}
         </Button>
-        {currentUser.isAdmin && (
+        {currentUser.isAdmin || currentUser.isEmployer ? (
           <Link to={"/create-job"}>
             <Button
               type="button"
@@ -253,6 +250,8 @@ export default function DashProfile() {
               Create a job
             </Button>
           </Link>
+        ) : (
+          <></>
         )}
       </form>
       <div className="text-red-500 flex justify-between mt-5 mb-10">

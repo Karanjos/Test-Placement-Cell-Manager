@@ -58,7 +58,7 @@ const FooterComponent = () => {
           </div>
         </div>
         <Footer.Divider className="my-5" />
-        <div className="w-full sm:flex sm:items-center sm:justify-between ">
+        <div className="w-full sm:flex sm:items-center sm:justify-stretch gap-20">
           <Footer.Copyright
             href="#"
             by="All rights reserved by Karan Joshi"

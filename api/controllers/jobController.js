@@ -2,14 +2,18 @@ import Job from "../models/jobModel.js";
 import { errorHandler } from "../utils/error.js";
 
 export const createJob = async (req, res, next) => {
-  if (!req.user.isAdmin) {
+  if (!req.user.isAdmin || !req.user.isEmployer) {
     return next(errorHandler(403, "You are not allowed to create a job"));
+  }
+  {
+    /** i want to append the jjob id which is coming from mongoose schema with the slug */
   }
   const slug = req.body.jobTitle
     .toLowerCase()
     .split(" ")
     .join("-")
-    .replace(/[^a-zA-Z0-9-]/g, "");
+    .replace(/[^a-zA-Z0-9-]/g, "")
+    .concat(`-${req.body.jobId}`);
   const newJob = new Job({
     ...req.body,
     slug,
