@@ -45,17 +45,34 @@ const DashApplications = () => {
       return acc;
     }, {})
   );
+  const [statusError, setStatusError] = useState("");
+  const [statusSuccess, setStatusSuccess] = useState("");
 
   useEffect(() => {
     const fetchApplications = async () => {
       setLoading(true);
       try {
-        const res = await fetch(
-          `/api/application/getapplications?postedBy=${currentUser._id}`
-        );
+        let res;
+        if (currentUser.isAdmin) {
+          res = await fetch(
+            `/api/application/getapplications?postedBy=${currentUser._id}`
+          );
+        }
+        if (currentUser.isEmployer) {
+          res = await fetch(
+            `/api/application/getapplications?employerId=${currentUser._id}`
+          );
+        }
         const data = await res.json();
         if (res.ok) {
           setApplications(data.applications);
+          setApplicationStatuses(
+            data.applications.reduce((acc, application) => {
+              acc[application.application._id] =
+                application.application.applicationStatus;
+              return acc;
+            }, {})
+          );
           if (data.applications.length < 9) {
             setShowMore(false);
           }
@@ -195,6 +212,8 @@ const DashApplications = () => {
       ...prevStatuses,
       [applicationId]: status,
     }));
+    setStatusError("");
+    setStatusSuccess("");
     try {
       const res = await fetch(
         `/api/application/updatestatus/${applicantId}/${applicationId}/${jobId}/${employerId}`,
@@ -213,11 +232,16 @@ const DashApplications = () => {
             application._id === applicationId ? data : application
           )
         );
+        setStatusSuccess("Application status updated successfully");
       } else {
+        setStatusError(data.message);
         console.log(data.message);
+        setStatusSuccess("");
       }
     } catch (error) {
+      setStatusError(error.message);
       console.log(error);
+      setStatusSuccess("");
     }
   };
 
@@ -249,7 +273,7 @@ const DashApplications = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="m-auto">
         <Spinner size="xl" />
       </div>
     );
@@ -266,6 +290,24 @@ const DashApplications = () => {
                 <TextInput placeholder="Search" />
               </form>
             </div> */}
+            {statusError && (
+              <Alert
+                color="failure"
+                onDismiss={() => setStatusError("")}
+                className="mb-5"
+              >
+                {statusError}
+              </Alert>
+            )}
+            {statusSuccess && (
+              <Alert
+                color="success"
+                onDismiss={() => setStatusSuccess("")}
+                className="mb-5"
+              >
+                {statusSuccess}
+              </Alert>
+            )}
           </div>
           <Table hoverable className="shadow-md w-full">
             <Table.Head>

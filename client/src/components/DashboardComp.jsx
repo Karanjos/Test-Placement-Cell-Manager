@@ -87,13 +87,13 @@ const DashboardComp = () => {
     const fetchApplicationsByEmployer = async () => {
       try {
         const res = await fetch(
-          `/api/application/getapplications?${currentUser._id}&limit=5`
+          `/api/application/getapplications?employerId=${currentUser._id}&limit=5`
         );
         const data = await res.json();
         if (res.ok) {
           setApplications(data.applications);
-          setTotalApplications(data.totalApplications);
-          setLastMonthApplications(data.lastMonthApplications);
+          setTotalApplications(data.applications.length);
+          setLastMonthApplications(data.applications.length);
         }
       } catch (error) {
         console.log(error.message);

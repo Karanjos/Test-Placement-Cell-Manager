@@ -1,4 +1,4 @@
-import { Button, Select, Spinner } from "flowbite-react";
+import { Alert, Button, Select, Spinner } from "flowbite-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import JobCard from "../components/JobCard";
@@ -209,8 +209,9 @@ const AppliedJobs = () => {
   const handleClose = () => setIsOpen(false);
 
   return (
-    <div className="flex flex-col md:flex-row px-3">
-      <Drawer open={isOpen} position="bottom" onClose={handleClose}>
+    <>
+      <div className="flex flex-col md:flex-row px-3 min-h-screen">
+        {/* <Drawer open={isOpen} position="bottom" onClose={handleClose}>
         <Drawer.Header title="Filters" titleIcon={FaFilter} />
         <Drawer.Items>
           <form
@@ -330,16 +331,16 @@ const AppliedJobs = () => {
             </div>
           </form>
         </Drawer.Items>
-      </Drawer>
+      </Drawer> */}
 
-      <div className="w-full">
-        {loading && (
-          <div className="flex justify-center items-center min-h-screen">
-            <Spinner size="xl" />
-          </div>
-        )}
-        <div className="flex items-center gap-3 border-b border-gray-500 ps-5 pb-5 my-5">
-          <h1 className=" text-lg font-bold  text-slate-700 dark:text-slate-200">
+        <div className="w-full">
+          {loading && (
+            <div className="flex justify-center items-center min-h-screen">
+              <Spinner size="xl" />
+            </div>
+          )}
+          {/* <div className="flex items-center gap-3 border-b border-gray-500 ps-5 pb-5 my-5">
+          {/* <h1 className=" text-lg font-bold  text-slate-700 dark:text-slate-200">
             JOB RESULTS
           </h1>
           <Button
@@ -350,27 +351,28 @@ const AppliedJobs = () => {
             color="light"
           >
             <FaFilter />
-          </Button>
-        </div>
-        <div className="p-7 flex flex-wrap gap-8 justify-center">
-          {!loading && jobs.length === 0 && (
-            <p className=" text-xl text-gray-500">No jobs found</p>
-          )}
-          {loading && <p className=" text-xl text-gray-500">Loading...</p>}
-          {!loading &&
-            jobs &&
-            jobs.map((job) => <JobCard job={job} key={job._id} />)}
-          {showMore && (
-            <button
-              className="text-teal-500 text-lg hover:underline p-7 w-full"
-              onClick={handleShowMore}
-            >
-              Show More
-            </button>
-          )}
+          </Button> 
+        </div> */}
+          <div className="p-7 flex flex-wrap gap-8 justify-center">
+            {!loading && jobs.length === 0 && (
+              <p className=" text-xl text-gray-500">No jobs found</p>
+            )}
+            {loading && <p className=" text-xl text-gray-500">Loading...</p>}
+            {!loading &&
+              jobs &&
+              jobs.map((job) => <JobCard job={job} key={job._id} />)}
+            {showMore && (
+              <button
+                className="text-teal-500 text-lg hover:underline p-7 w-full"
+                onClick={handleShowMore}
+              >
+                Show More
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 export default AppliedJobs;

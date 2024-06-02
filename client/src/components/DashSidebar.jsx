@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { FaBriefcase, FaRegComments } from "react-icons/fa";
 import { AiOutlineMenuUnfold } from "react-icons/ai";
+import { current } from "@reduxjs/toolkit";
 
 const DashSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
@@ -57,7 +58,8 @@ const DashSidebar = ({ sidebarOpen, setSidebarOpen }) => {
             <div className="flex h-full flex-col justify-between py-2">
               <Sidebar.Items>
                 <Sidebar.ItemGroup className="flex flex-col gap-1">
-                  {currentUser && currentUser.isAdmin && (
+                  {currentUser &&
+                  (currentUser.isAdmin || currentUser.isEmployer) ? (
                     <Link to="/dashboard?tab=dash">
                       <Sidebar.Item
                         active={tab === "dash" || !tab}
@@ -71,6 +73,8 @@ const DashSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         Dashboard
                       </Sidebar.Item>
                     </Link>
+                  ) : (
+                    <></>
                   )}
                   <Link to="/dashboard?tab=profile">
                     <Sidebar.Item
@@ -160,7 +164,8 @@ const DashSidebar = ({ sidebarOpen, setSidebarOpen }) => {
         <div className="flex h-full flex-col justify-between py-2">
           <Sidebar.Items>
             <Sidebar.ItemGroup className="flex flex-col gap-1">
-              {currentUser && currentUser.isAdmin && (
+              {(currentUser && currentUser.isAdmin) ||
+              currentUser.isEmployer ? (
                 <Link to="/dashboard?tab=dash">
                   <Sidebar.Item
                     active={tab === "dash" || !tab}
@@ -172,6 +177,8 @@ const DashSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     Dashboard
                   </Sidebar.Item>
                 </Link>
+              ) : (
+                <></>
               )}
               <Link to="/dashboard?tab=profile">
                 <Sidebar.Item
