@@ -41,7 +41,12 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(401, "Inavalid credentials"));
     }
     const token = jwt.sign(
-      { id: validUser._id, isAdmin: validUser.isAdmin },
+      {
+        id: validUser._id,
+        isAdmin: validUser.isAdmin,
+        isEmployer: validUser.isEmployer,
+        isStudent: validUser.isStudent,
+      },
       process.env.JWT_SECRET
     );
     const { password: hashedPassword, ...rest } = validUser._doc;

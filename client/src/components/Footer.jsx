@@ -43,7 +43,7 @@ const FooterComponent = () => {
               <Footer.Title title="Follow us" />
               <Footer.LinkGroup col>
                 <Footer.Link href="https://github.com/Karanjos" target="_blank">
-                  GutHub
+                  GitHub
                 </Footer.Link>
                 <Footer.Link href="#">LinkedIn</Footer.Link>
               </Footer.LinkGroup>

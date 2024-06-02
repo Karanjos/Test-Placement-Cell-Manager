@@ -212,7 +212,7 @@ export default function Help() {
           </ul>
         </div>
       </div>
-      <div className="">
+      <div className="md:fixed bottom-12 right-20 z-50">
         {chatVisible && (
           <div ref={chatbotRef}>
             <ChatBot

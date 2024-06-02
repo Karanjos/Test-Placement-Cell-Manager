@@ -162,10 +162,12 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
             <Link to="dashboard?tab=profile">
               <Dropdown.Item icon={FaUser}>Profile</Dropdown.Item>
             </Link>
-            {currentUser && currentUser.isAdmin && (
+            {currentUser && (currentUser.isEmployer || currentUser.isAdmin) ? (
               <Link to="dashboard?tab=dash">
                 <Dropdown.Item icon={HiViewGrid}>Dashboard</Dropdown.Item>
               </Link>
+            ) : (
+              <></>
             )}
             <Dropdown.Item
               className="lg:hidden"
@@ -207,12 +209,18 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
               All Jobs
             </Navbar.Link>
           </Link>
+        ) : currentUser && currentUser.isStudent ? (
+          <Link to="/applied-jobs">
+            <Navbar.Link active={path === "/applied-jobs"} as={"div"}>
+              Applied Jobs
+            </Navbar.Link>
+          </Link>
         ) : (
           currentUser &&
-          currentUser.isApplicant && (
-            <Link to="/applied-jobs">
-              <Navbar.Link active={path === "/applied-jobs"} as={"div"}>
-                Applied Jobs
+          currentUser.isEmployer && (
+            <Link to="/posted-job">
+              <Navbar.Link active={path === "/posted-job"} as={"div"}>
+                Posted Jobs
               </Navbar.Link>
             </Link>
           )

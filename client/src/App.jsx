@@ -8,9 +8,6 @@ import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Footer from "./components/Footer";
 import AdminRoute from "./components/AdminRoute";
-import CreatePost from "./pages/CreatePost";
-import UpdatePost from "./pages/UpdatePost";
-import PostPage from "./pages/PostPage";
 import CreateJob from "./pages/CreateJob";
 import ScrollTop from "./components/ScrollToTop";
 import Search from "./pages/Search";
@@ -21,6 +18,7 @@ import PageNotFound from "./pages/PageNotFound";
 import { useState } from "react";
 import AppliedJobs from "./pages/AppliedJobs";
 import Help from "./pages/Help";
+import PostedJobs from "./pages/PostedJobs";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -37,7 +35,6 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/search" element={<Search />} />
         <Route path="/help" element={<Help />} />
-        <Route path="/post/:postSlug" element={<PostPage />} />
         <Route path="/job/:jobSlug" element={<JobPage />} />
         <Route path="/apply/:jobId" element={<ApplyJob />} />
         <Route path="/applied-jobs" element={<AppliedJobs />} />
@@ -54,10 +51,9 @@ function App() {
           />
         </Route>
         <Route element={<AdminRoute />}>
-          <Route path="/create-post" element={<CreatePost />} />
           <Route path="/create-job" element={<CreateJob />} />
-          <Route path="/update-post/:postId" element={<UpdatePost />} />
           <Route path="/update-job/:jobId" element={<UpdateJob />} />
+          <Route path="/posted-job" element={<PostedJobs />} />
         </Route>
       </Routes>
       <Footer />

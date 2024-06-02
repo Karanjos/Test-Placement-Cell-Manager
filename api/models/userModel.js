@@ -28,13 +28,17 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isApplicant: {
+    isStudent: {
       type: Boolean,
       default: false,
     },
-    requestedFor: {
+    isPlaced: {
+      type: Boolean,
+      default: false,
+    },
+    role: {
       type: String,
-      enum: ["employer", "applicant"],
+      enum: ["admin", "employer", "student"],
     },
     placementRecords: [
       {

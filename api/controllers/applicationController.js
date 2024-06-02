@@ -199,7 +199,10 @@ export const updateApplicationStatus = async (req, res, next) => {
         // add this placement record to the user's schema
         await User.findOneAndUpdate(
           { _id: req.params.applicantId },
-          { $push: { placementRecords: newPlacementRecord._id } },
+          {
+            $push: { placementRecords: newPlacementRecord._id },
+            $set: { isPlaced: true },
+          },
           { new: true, useFindAndModify: false }
         );
       }

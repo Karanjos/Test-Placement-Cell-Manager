@@ -1,12 +1,4 @@
-import {
-  Alert,
-  Button,
-  FileInput,
-  Label,
-  Select,
-  TextInput,
-  Datepicker,
-} from "flowbite-react";
+import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -21,6 +13,8 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const UpdateJob = () => {
   const [file, setFile] = useState(null);
@@ -496,7 +490,7 @@ const UpdateJob = () => {
         <div className="divider font-bold text-slate-600 divider-neutral dark:divider-default ">
           OTHER DETAILS
         </div>
-        <div className="flex flex-col gap-4 sm:flex-row justify-between items-end">
+        <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <Select
             onChange={(e) => {
               setFormData({ ...formData, jobLocation: e.target.value });
@@ -523,18 +517,19 @@ const UpdateJob = () => {
             <option value="6-10 years">6-10 years</option>
             <option value="10+ years">10+ years</option>
           </Select>
-          <div className="flex-1">
-            <Label className="text-sm self-center font-semibold text-slate-600 mx-1">
-              APPLICATION DEADLINE
-            </Label>
-            <Datepicker
+          <div className="flex-1 flex flex-col">
+            <DatePicker
               id="applicationDeadline"
-              onChange={(e) =>
+              className="w-full border disabled:cursor-not-allowed disabled:opacity-50 border-gray-300 bg-gray-50 text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-cyan-500 dark:focus:ring-cyan-500 p-2.5 text-sm rounded-lg"
+              selected={formData.applicationDeadline}
+              onSelect={(date) =>
                 setFormData({
                   ...formData,
-                  applicationDeadline: e.target.value,
+                  applicationDeadline: date,
                 })
               }
+              placeholderText="Select the application deadline"
+              dateFormat="dd/MM/yyyy"
               value={applicationDeadline || ""}
             />
           </div>

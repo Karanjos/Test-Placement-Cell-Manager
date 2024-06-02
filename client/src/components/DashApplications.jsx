@@ -62,7 +62,7 @@ const DashApplications = () => {
         setLoading(false);
       }
     };
-    if (currentUser.isAdmin) fetchApplications();
+    if (currentUser.isEmployer || currentUser.isAdmin) fetchApplications();
   }, [currentUser._id]);
 
   const handleEditApplication = async (applicationId) => {

@@ -2,8 +2,6 @@ import { Button, Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CallToAction from "../components/CallToAction";
-import CommentSection from "../components/CommentSection";
-import PostCard from "../components/PostCard";
 import {
   FaRupeeSign,
   FaClock,
@@ -73,7 +71,7 @@ const JobPage = () => {
     );
 
   return (
-    <div className="py-3 flex flex-col max-w-6xl mx-auto min-h-screen">
+    <div className="py-3 flex flex-col max-w-6xl mx-auto min-h-screen mb-10">
       <h1 className="text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl">
         {currentJob.jobTitle}
       </h1>
@@ -210,25 +208,36 @@ const JobPage = () => {
         </div>
       </div>
       {/**call to action */}
-      <div className="w-full mt-10">
-        <CallToAction />
-      </div>
-      <div className="divider mt-10 mb-5"></div>
+      {currentUser && currentUser.isStudent ? (
+        <div className="w-full mt-10">
+          <CallToAction />
+        </div>
+      ) : (
+        <></>
+      )}
+
       {/**recent jobs */}
-      <div className="flex flex-col px-3 mb-10">
-        <h3 className="text-xl font-bold">Recent Jobs</h3>
-        <div className="flex flex-wrap gap-10 mt-10 justify-center">
-          {recentJobs &&
-            recentJobs.map((job) => <JobCard job={job} key={job._id} />)}
-        </div>
-        <div className=" self-center mt-5">
-          <Link to="/search">
-            <Button color="gray" pill>
-              View all jobs
-            </Button>
-          </Link>
-        </div>
-      </div>
+      {(currentUser && currentUser.isAdmin) || currentUser.isStudent ? (
+        <>
+          <div className="divider mt-10 mb-5"></div>
+          <div className="flex flex-col px-3 mb-10">
+            <h3 className="text-xl font-bold">Recent Jobs</h3>
+            <div className="flex flex-wrap gap-10 mt-10 justify-center">
+              {recentJobs &&
+                recentJobs.map((job) => <JobCard job={job} key={job._id} />)}
+            </div>
+            <div className=" self-center mt-5">
+              <Link to="/search">
+                <Button color="gray" pill>
+                  View all jobs
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

@@ -102,6 +102,7 @@ const SignIn = () => {
             >
               {loading ? "Loading..." : "Sign In"}
             </Button>
+            <div className="divider">OR</div>
             <OAuth />
           </form>
           <div className=" flex gap-2 text-sm mt-5">

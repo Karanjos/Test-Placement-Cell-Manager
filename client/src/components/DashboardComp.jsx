@@ -24,8 +24,6 @@ const DashboardComp = () => {
   const [totalPlacedStudents, setTotalPlacedStudents] = useState(0);
   const [lastMonthPlacedStudents, setLastMonthPlacedStudents] = useState(0);
 
-  console.log(applications);
-
   useEffect(() => {
     const ftechUsers = async () => {
       try {
@@ -86,6 +84,26 @@ const DashboardComp = () => {
       }
     };
 
+    const fetchApplicationsByEmployer = async () => {
+      try {
+        const res = await fetch(
+          `/api/application/getapplications?${currentUser._id}&limit=5`
+        );
+        const data = await res.json();
+        if (res.ok) {
+          setApplications(data.applications);
+          setTotalApplications(data.totalApplications);
+          setLastMonthApplications(data.lastMonthApplications);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    if (currentUser && currentUser.isEmployer) {
+      fetchApplicationsByEmployer();
+    }
+
     if (currentUser.isAdmin) {
       ftechUsers();
       fetchJobs();
@@ -93,6 +111,7 @@ const DashboardComp = () => {
       fetchPlacedStudents();
     }
   }, [currentUser]);
+
   return (
     <div className="p-3 md:mx-auto py-10">
       <div className="flex-wrap flex gap-4 justify-center">

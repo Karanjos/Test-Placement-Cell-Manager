@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import DashSidebar from "../components/DashSidebar";
 import DashProfile from "../components/DashProfile";
 import DashUsers from "../components/DashUsers";
-import DashComment from "../components/DashComments";
 import DashboardComp from "../components/DashboardComp";
 import DashJobs from "../components/DashJobs";
 import DashApplications from "../components/DashApplications";

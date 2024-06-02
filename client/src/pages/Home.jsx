@@ -151,41 +151,42 @@ export default function Home() {
         </div>
       </div>
 
-      {currentUser && currentUser.isApplicant && (
+      {currentUser && currentUser.isStudent && (
         <>
           <div className="divider"></div>
           <CallToAction />
         </>
       )}
 
-      <div className="divider my-10">
-        {" "}
-        <h1 className=" text-4xl font-extrabold dark:text-slate-400">
-          Recent Jobs
-        </h1>
-      </div>
-
-      <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 py-7">
+      <div className="max-w-6xl mx-auto flex flex-col gap-8 py-7">
         {jobs &&
           jobs.length > 0 &&
           (currentUser && currentUser.isEmployer ? (
-            <div className=""></div>
+            <></>
           ) : (
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-wrap justify-center gap-4">
-                {jobs.map((job) => (
-                  <JobCard key={job._id} job={job} />
-                ))}
+            <>
+              <div className="divider my-10">
+                {" "}
+                <h1 className=" text-4xl font-extrabold dark:text-slate-400">
+                  Recent Jobs
+                </h1>
               </div>
-              <Link
-                to={"/search"}
-                className="text-sm font-bold hover:underline self-center"
-              >
-                <Button color="gray" pill>
-                  View all jobs
-                </Button>
-              </Link>
-            </div>
+              <div className="flex flex-col gap-6 p-3">
+                <div className="flex flex-wrap justify-center gap-4">
+                  {jobs.map((job) => (
+                    <JobCard key={job._id} job={job} />
+                  ))}
+                </div>
+                <Link
+                  to={"/search"}
+                  className="text-sm font-bold hover:underline self-center"
+                >
+                  <Button color="gray" pill>
+                    View all jobs
+                  </Button>
+                </Link>
+              </div>
+            </>
           ))}
       </div>
     </div>

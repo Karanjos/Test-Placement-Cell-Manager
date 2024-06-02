@@ -4,8 +4,6 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/userRoute.js";
 import authRoutes from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
-import postRoutes from "./routes/postRoute.js";
-import commentRoutes from "./routes/commentRoute.js";
 import jobRoutes from "./routes/jobRoute.js";
 import applicationRoutes from "./routes/applicationRoute.js";
 import path from "path";
@@ -33,8 +31,6 @@ app.listen(3000, () => {
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/post", postRoutes);
-app.use("/api/comment", commentRoutes);
 app.use("/api/job", jobRoutes);
 app.use("/api/application", applicationRoutes);
 

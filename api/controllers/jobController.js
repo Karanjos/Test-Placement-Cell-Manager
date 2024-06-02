@@ -2,28 +2,26 @@ import Job from "../models/jobModel.js";
 import { errorHandler } from "../utils/error.js";
 
 export const createJob = async (req, res, next) => {
-  if (!req.user.isAdmin || !req.user.isEmployer) {
-    return next(errorHandler(403, "You are not allowed to create a job"));
-  }
-  {
-    /** i want to append the jjob id which is coming from mongoose schema with the slug */
-  }
-  const slug = req.body.jobTitle
-    .toLowerCase()
-    .split(" ")
-    .join("-")
-    .replace(/[^a-zA-Z0-9-]/g, "")
-    .concat(`-${req.body.jobId}`);
-  const newJob = new Job({
-    ...req.body,
-    slug,
-    postedBy: req.user.id,
-  });
-  try {
-    const savedJob = await newJob.save();
-    res.status(201).json(savedJob);
-  } catch (error) {
-    next(error);
+  if (req.user.isAdmin || req.user.isEmployer) {
+    const slug = req.body.jobTitle
+      .toLowerCase()
+      .split(" ")
+      .join("-")
+      .replace(/[^a-zA-Z0-9-]/g, "")
+      .concat(`-${req.body.jobId}`);
+    const newJob = new Job({
+      ...req.body,
+      slug,
+      postedBy: req.user.id,
+    });
+    try {
+      const savedJob = await newJob.save();
+      res.status(201).json(savedJob);
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    return next(errorHandler(403, "You are not allowed to create a job!"));
   }
 };
 
@@ -75,28 +73,43 @@ export const getjobs = async (req, res, next) => {
 };
 
 export const deleteJob = async (req, res, next) => {
-  if (!req.user.isAdmin || req.user.id !== req.params.postedBy) {
+  if (req.user.isAdmin || req.user.id === req.params.postedBy) {
+    try {
+      await Job.findByIdAndDelete(req.params.jobId);
+      res.status(200).json("Job has been deleted");
+    } catch (error) {
+      next(error);
+    }
+  } else {
     return next(errorHandler(403, "You are not allowed to delete this job"));
-  }
-  try {
-    await Job.findByIdAndDelete(req.params.jobId);
-    res.status(200).json("Job has been deleted");
-  } catch (error) {
-    next(error);
   }
 };
 
 export const updateJob = async (req, res, next) => {
-  if (!req.user.isAdmin || req.user.id !== req.params.postedBy) {
+  console.log(req.user.id);
+  console.log(req.params.postedBy);
+  console.log(req.user.id !== req.params.postedBy);
+  if (req.user.isAdmin || req.user.id === req.params.postedBy) {
+    try {
+      const updatedJob = await Job.findByIdAndUpdate(
+        req.params.jobId,
+        { $set: req.body },
+        { new: true }
+      );
+      res.status(200).json(updatedJob);
+    } catch (error) {
+      next(error);
+    }
+  } else {
     return next(errorHandler(403, "You are not allowed to update this job"));
   }
+};
+
+export const getPostedJobsByEmployer = async (req, res, next) => {
+  const limit = parseInt(req.query.limit) || 9;
   try {
-    const updatedJob = await Job.findByIdAndUpdate(
-      req.params.jobId,
-      { $set: req.body },
-      { new: true }
-    );
-    res.status(200).json(updatedJob);
+    const jobs = await Job.find({ postedBy: req.params.postedBy }).limit(limit);
+    res.status(200).json(jobs);
   } catch (error) {
     next(error);
   }
