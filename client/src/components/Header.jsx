@@ -73,7 +73,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
   return (
     <Navbar className="border-b-2" style={{ margin: 0, padding: 0 }}>
       {showSearchbar && (
-        <div className="sm:hidden w-full p-1 absolute top-1 z-50 bg-white h-auto dark:bg-slate-700">
+        <div className="lg:hidden w-full p-1 absolute top-1 left-0 z-50 bg-white h-auto dark:bg-slate-700">
           <form
             onSubmit={handleSubmit}
             className="flex items-center border border-gray-300 rounded-lg p-2 gap-2 w-full"
@@ -84,7 +84,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
             <TextInput
               type="text"
               placeholder="Search..."
-              className="md:hidden w-full"
+              className="lg:hidden w-full"
               value={searchTerm}
               rightIcon={AiOutlineSearch}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -116,7 +116,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
         </div>
       </div>
       <div className=" flex gap-4 md:order-2 p-3">
-        <form onSubmit={handleSubmit} className="me-5 hidden sm:inline">
+        <form onSubmit={handleSubmit} className="me-5 hidden lg:inline">
           <div className="w-48">
             <TextInput
               type="text"
@@ -129,7 +129,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
         </form>
         <FaSearch
-          className="block sm:hidden border my-auto w-10 h-10 border-gray-300 rounded-2xl p-3 cursor-pointer"
+          className="block lg:hidden border my-auto w-10 h-10 border-gray-300 rounded-2xl p-3 cursor-pointer"
           color="gray"
           pill
           type="button"
