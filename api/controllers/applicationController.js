@@ -136,52 +136,55 @@ export const updateApplication = async (req, res, next) => {
 };
 
 export const updateApplicationStatus = async (req, res, next) => {
-  if (!req.user.isAdmin && req.user.id !== req.params.employerId) {
-    return next(
-      errorHandler(403, "You are not allowed to update this application")
-    );
-  }
-  try {
-    const application = await Application.findById(req.params.applicationId);
-    if (!application) {
-      return next(errorHandler(404, "Application not found"));
-    }
-    const job = await Job.findById(req.params.jobId);
-    if (!job) {
-      return next(errorHandler(404, "Job not found"));
-    }
-    if (job.postedBy.toString() !== req.params.employerId) {
-      return next(
-        errorHandler(403, "You are not allowed to update this application")
+  if (req.user.isAdmin || req.user.id === req.params.employerId) {
+    try {
+      const [application, job, applicant, employer] = await Promise.all([
+        Application.findById(req.params.applicationId),
+        Job.findById(req.params.jobId),
+        User.findById(req.params.applicantId),
+        User.findById(req.params.employerId),
+      ]);
+
+      if (!application) {
+        return next(errorHandler(404, "Application not found"));
+      }
+      if (!job) {
+        return next(errorHandler(404, "Job not found"));
+      }
+      if (!applicant) {
+        return next(errorHandler(404, "Applicant not found"));
+      }
+      if (!employer) {
+        return next(errorHandler(404, "Employer not found"));
+      }
+      if (job.postedBy.toString() !== req.params.employerId) {
+        return next(
+          errorHandler(403, "You are not allowed to update this application")
+        );
+      }
+
+      const updatedApplication = await Application.findByIdAndUpdate(
+        req.params.applicationId,
+        { applicationStatus: req.body.applicationStatus },
+        { new: true }
       );
-    }
-    const applicant = await User.findById(req.params.applicantId);
-    if (!applicant) {
-      return next(errorHandler(404, "Applicant not found"));
-    }
-    const employer = await User.findById(req.params.employerId);
-    if (!employer) {
-      return next(errorHandler(404, "Employer not found"));
-    }
-    const updatedApplication = await Application.findByIdAndUpdate(
-      req.params.applicationId,
-      { applicationStatus: req.body.applicationStatus },
-      { new: true }
-    );
-    if (req.body.applicationStatus === "Accepted") {
-      await Job.findByIdAndUpdate(req.body.jobId, {
-        $push: { acceptedApplicants: req.params.applicationId },
-      });
-      const existingRecord = await PlacementRecord.findOne({
-        applicationId: req.params.applicationId,
-      });
-      if (existingRecord) {
-        // Handle the case where a PlacementRecord with the given applicationId already exists
-        // For example, you can return an error
-        return res.status(400).json({
-          error: "A PlacementRecord with this applicationId already exists",
+      if (req.body.applicationStatus === "Accepted") {
+        await Job.findByIdAndUpdate(req.body.jobId, {
+          $addToSet: { acceptedApplicants: req.params.applicantId },
         });
-      } else {
+        const existingPlacementRecord = await PlacementRecord.findOne({
+          applicationId: req.params.applicationId,
+        });
+
+        if (existingPlacementRecord) {
+          return next(
+            errorHandler(
+              400,
+              "A PlacementRecord with this applicationId already exists"
+            )
+          );
+        }
+
         const newPlacementRecord = new PlacementRecord({
           jobId: req.params.jobId,
           applicationId: req.params.applicationId,
@@ -195,39 +198,51 @@ export const updateApplicationStatus = async (req, res, next) => {
           employerName: employer.username,
           jobCategory: job.jobCategory,
         });
+
         await newPlacementRecord.save();
-        // add this placement record to the user's schema
-        await User.findOneAndUpdate(
-          { _id: req.params.applicantId },
+
+        await User.findByIdAndUpdate(
+          req.params.applicantId,
           {
-            $push: { placementRecords: newPlacementRecord._id },
+            $addToSet: { placementRecords: newPlacementRecord._id },
             $set: { isPlaced: true },
           },
+          { new: true }
+        );
+      } else if (req.body.applicationStatus === "Rejected") {
+        await Job.findByIdAndUpdate(req.body.jobId, {
+          $push: { rejectedApplicants: req.params.applicantId },
+        });
+
+        const existingPlacementRecord = await PlacementRecord.findOne({
+          applicationId: req.params.applicationId,
+        });
+        if (!existingPlacementRecord) {
+          return next(errorHandler(404, "Placement record not found"));
+        }
+
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: req.params.applicantId },
+          { $pull: { placementRecords: existingPlacementRecord._id } },
           { new: true, useFindAndModify: false }
         );
+        if (!updatedUser) {
+          return next(errorHandler(404, "User not found"));
+        }
+        // delete the record from placement record
+        await PlacementRecord.findOneAndDelete({
+          applicationId: req.params.applicationId,
+        });
       }
-    } else if (req.body.applicationStatus === "Rejected") {
-      await Job.findByIdAndUpdate(req.body.jobId, {
-        $push: { rejectedApplicants: req.params.applicationId },
-      });
 
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: req.params.applicantId },
-        { $pull: { placementRecords: req.params.applicationId } },
-        { new: true, useFindAndModify: false }
-      );
-      if (!updatedUser) {
-        return next(errorHandler(404, "User not found"));
-      }
-      // delete the record from placement record
-      await PlacementRecord.findOneAndDelete({
-        applicationId: req.params.applicationId,
-      });
+      res.status(200).json(updatedApplication);
+    } catch (error) {
+      next(error);
     }
-
-    res.status(200).json(updatedApplication);
-  } catch (error) {
-    next(error);
+  } else {
+    return next(
+      errorHandler(403, "You are not allowed to update this application")
+    );
   }
 };
 

@@ -86,9 +86,6 @@ export const deleteJob = async (req, res, next) => {
 };
 
 export const updateJob = async (req, res, next) => {
-  console.log(req.user.id);
-  console.log(req.params.postedBy);
-  console.log(req.user.id !== req.params.postedBy);
   if (req.user.isAdmin || req.user.id === req.params.postedBy) {
     try {
       const updatedJob = await Job.findByIdAndUpdate(

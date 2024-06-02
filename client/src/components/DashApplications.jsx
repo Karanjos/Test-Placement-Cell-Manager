@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import {
   Alert,
   Button,
-  Checkbox,
   FileInput,
   Modal,
   Select,
@@ -39,6 +38,13 @@ const DashApplications = () => {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [applicationStatuses, setApplicationStatuses] = useState(
+    applications.reduce((acc, application) => {
+      acc[application.application._id] =
+        application.application.applicationStatus;
+      return acc;
+    }, {})
+  );
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -50,8 +56,6 @@ const DashApplications = () => {
         const data = await res.json();
         if (res.ok) {
           setApplications(data.applications);
-          console.log(data.applications);
-          console.log(applications);
           if (data.applications.length < 9) {
             setShowMore(false);
           }
@@ -187,6 +191,10 @@ const DashApplications = () => {
     applicantId,
     employerId
   ) => {
+    setApplicationStatuses((prevStatuses) => ({
+      ...prevStatuses,
+      [applicationId]: status,
+    }));
     try {
       const res = await fetch(
         `/api/application/updatestatus/${applicantId}/${applicationId}/${jobId}/${employerId}`,
@@ -249,7 +257,8 @@ const DashApplications = () => {
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500 mt-5">
-      {currentUser.isAdmin && applications.length > 0 ? (
+      {(currentUser.isAdmin || currentUser.isEmployer) &&
+      applications.length > 0 ? (
         <>
           <div className="">
             {/* <div className="flex justify-end gap-5 m-2">
@@ -260,9 +269,6 @@ const DashApplications = () => {
           </div>
           <Table hoverable className="shadow-md w-full">
             <Table.Head>
-              <Table.HeadCell className="p-4">
-                <Checkbox />
-              </Table.HeadCell>
               <Table.HeadCell>Student Name</Table.HeadCell>
               <Table.HeadCell>Student Email</Table.HeadCell>
               <Table.HeadCell>Job Title</Table.HeadCell>
@@ -273,9 +279,6 @@ const DashApplications = () => {
             {applications.map((application) => (
               <Table.Body className="divide-y" key={application._id}>
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell className="p-4">
-                    <Checkbox />
-                  </Table.Cell>
                   <Table.Cell>
                     {application.application.applicantName}
                   </Table.Cell>
@@ -297,11 +300,10 @@ const DashApplications = () => {
                           application.application.employerId
                         )
                       }
-                      value={application.application.applicationStatus}
+                      value={applicationStatuses[application.application._id]}
                     >
-                      <option value="Pending">Pending</option>
-                      <option value="Accepted">Accepted</option>
-                      <option value="Rejected">Rejected</option>
+                      <option value="Accepted">Accept</option>
+                      <option value="Rejected">Reject</option>
                     </Select>
                   </Table.Cell>
                   <Table.Cell>

@@ -118,7 +118,7 @@ const DashSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         title={!sidebarOpen && "Users"}
                         onClick={handleClose}
                       >
-                        Users
+                        Students
                       </Sidebar.Item>
                     </Link>
                   )}
@@ -216,7 +216,7 @@ const DashSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     as="div"
                     title={!sidebarOpen && "Users"}
                   >
-                    Users
+                    Students
                   </Sidebar.Item>
                 </Link>
               )}

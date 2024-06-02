@@ -335,12 +335,23 @@ const DashboardComp = () => {
                     <Table.Cell>{application.job.companyName}</Table.Cell>
 
                     <Table.Cell>
-                      {application.application.status === "pending" ? (
-                        <Badge color="yellow">Pending</Badge>
-                      ) : application.application.status === "rejected" ? (
-                        <Badge color="red">Rejected</Badge>
+                      {application.application.applicationStatus ===
+                      "pending" ? (
+                        <Badge color="yellow" className="w-auto">
+                          Pending
+                        </Badge>
+                      ) : application.application.applicationStatus ===
+                        "Rejected" ? (
+                        <Badge color="red" className="w-auto">
+                          Rejected
+                        </Badge>
+                      ) : application.application.applicationStatus ===
+                        "Accepted" ? (
+                        <Badge color="green" className="text-auto">
+                          Accepted
+                        </Badge>
                       ) : (
-                        <Badge color="green">Accepted</Badge>
+                        <></>
                       )}
                     </Table.Cell>
                   </Table.Row>

@@ -14,12 +14,11 @@ const applicationSchema = new mongoose.Schema(
     applicantEmail: {
       type: String,
       required: true,
-      unique: true,
+      unique: false,
     },
     applicantPhone: {
       type: String,
       required: true,
-      unique: true,
     },
     applicantResume: {
       type: String,
@@ -37,6 +36,7 @@ const applicationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Job",
       required: true,
+      unique: [true, "You have already applied for this job"],
     },
     applicationStatus: {
       type: String,

@@ -203,13 +203,16 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
             Home
           </Navbar.Link>
         </Link>
-        {currentUser && currentUser.isAdmin ? (
+        {currentUser && (currentUser.isAdmin || currentUser.isStudent) ? (
           <Link to="/search">
             <Navbar.Link active={path === "/search"} as={"div"}>
               All Jobs
             </Navbar.Link>
           </Link>
-        ) : currentUser && currentUser.isStudent ? (
+        ) : (
+          <></>
+        )}
+        {currentUser && currentUser.isStudent ? (
           <Link to="/applied-jobs">
             <Navbar.Link active={path === "/applied-jobs"} as={"div"}>
               Applied Jobs
@@ -232,7 +235,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
         </Link>
         <Link to="/help">
           <Navbar.Link active={path === "/help"} as={"div"}>
-            Help & Support
+            Help
           </Navbar.Link>
         </Link>
       </Navbar.Collapse>
