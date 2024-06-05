@@ -51,14 +51,14 @@ export default function Help() {
     {
       id: "ab",
       message: `You can contact Karan Joshi
-        Email:karanjoshi@gmail.com`,
+        Email:karanjoshi397 @gmail.com`,
       trigger: "9",
     },
 
     {
       id: "6",
-      message: `you can contact Akhil Patwal
-        Email:akhilpatwal4@gmail.com`,
+      message: `you can contact Karan Joshi
+        Email:gjkaran397 @gmail.com`,
       trigger: "9",
     },
     {

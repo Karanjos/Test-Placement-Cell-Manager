@@ -52,7 +52,7 @@ export default function Home() {
           </Link>
         )}
       </div>
-      <div className="divider">
+      {/* <div className="divider">
         {" "}
         <h1 className=" text-4xl font-extrabold dark:text-slate-400">
           Our Team
@@ -131,7 +131,7 @@ export default function Home() {
             <img
               src="https://firebasestorage.googleapis.com/v0/b/mern-auth-joshi.appspot.com/o/1717139862814photo.jpeg?alt=media&token=bcba2c3c-5209-4708-98a3-f28552949b60"
               alt="Ankit Jeena"
-              className="rounded-full w-36 h-36 object-cover"
+              className="rounded-full w-36 h-36"
             />
             <p>Ankit Jeena</p>
             <p>Front End Developer</p>
@@ -149,7 +149,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {currentUser && currentUser.isStudent && (
         <>
