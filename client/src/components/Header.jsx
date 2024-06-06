@@ -66,8 +66,13 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   const toggleSearchbar = () => {
-    searchInputRef.current && searchInputRef.current.focus();
     setShowSearchbar(!showSearchbar);
+    if (!showSearchbar) {
+      // This will be executed after state update, we use setTimeout with 0 delay.
+      setTimeout(() => {
+        searchInputRef.current.focus();
+      }, 0);
+    }
   };
 
   return (
@@ -82,13 +87,13 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
               <FaCircleArrowLeft size={30} className=" cursor-pointer" />
             </button>
             <TextInput
+              ref={searchInputRef}
               type="text"
               placeholder="Search..."
               className="lg:hidden w-full"
               value={searchTerm}
               rightIcon={AiOutlineSearch}
               onChange={(e) => setSearchTerm(e.target.value)}
-              ref={searchInputRef}
             />
           </form>
         </div>
